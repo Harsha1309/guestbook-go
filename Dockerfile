@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.10.0
-RUN go get github.com/codegangsta/negroni \
-           github.com/gorilla/mux \
+FROM golang:1.16 as builder
 
 WORKDIR /app
-ADD ./main.go .
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
 RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
 FROM scratch
